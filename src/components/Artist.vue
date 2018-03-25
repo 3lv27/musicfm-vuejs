@@ -16,8 +16,7 @@ export default {
 
 <style scoped>
   li {
-    display: block;
-    margin: 10px 0;
+  
 
   }
 

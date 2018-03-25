@@ -2,6 +2,10 @@
   <div id="app">
     <img src="./assets/logo.png">
     <h1>MusicFM</h1>
+    <select v-model="selectedCountry">
+      <option v-for="country in countries" :value="country.value"> {{country.name}} </option>
+    </select>
+    <loader v-show="loading"></loader>
     <ul>
       <artist v-for="artist in artists" v-bind:artist="artist" v-bind:key="artist.mbid"> 
       </artist>
@@ -11,21 +15,46 @@
 
 <script>
 import Artist from './components/Artist.vue'
+import Loader from './components/Loader.vue'
 import getArtists from './api'
 
 export default {
   name: 'app',
   data () {
     return {
-      artists: []
+      artists: [],
+      countries:[
+        { name: 'Spain', value: 'spain' },
+        { name: 'Cyprus', value: 'cyprus' },
+        { name: 'USA', value: 'united states of america' },
+        { name: 'Venezuela', value: 'venezuela' },
+      ],
+      selectedCountry: 'spain',
+      loading: true
     }
   },
   components: {
-    Artist
+    Artist,
+    Loader
   },
-  mounted: function () {
-    getArtists()
-      .then((artists) => this.artists = artists)
+  methods: {
+    refreshArtists () {
+      this.loading = true
+      this.artists = []
+       getArtists(this.selectedCountry)
+      .then((artists) =>  {
+        this.artists = artists
+        this.loading = false
+      })
+    }
+  },
+  mounted () {
+    this.refreshArtists()
+  },
+  watch: {
+    selectedCountry () {
+      this.refreshArtists()
+    }
   }
 }
 </script>
